@@ -1,5 +1,6 @@
 # The 142 Hz Signature: A Fractal Marker of Neural Efficiency
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18237860.svg)](https://doi.org/10.5281/zenodo.18237860)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
@@ -64,7 +65,9 @@ pip install -r requirements.txt
   author = {Assouline, Aurélie},
   title = {The 142 Hz Signature: A Fractal Marker of Neural Efficiency},
   year = {2026},
-  publisher = {Holotheia.ai}
+  publisher = {Holotheia.ai},
+  doi = {10.5281/zenodo.18237860},
+  url = {https://doi.org/10.5281/zenodo.18237860}
 }
 ```
 
