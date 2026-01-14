@@ -48,7 +48,7 @@ pip install -r requirements.txt
 ├── ARTICLE_FINAL_PUBLICATION.md    # Publication version
 ├── figures/                         # Publication figures (PNG + PDF)
 ├── docs/
-│   └── DERIVATION_THEORIQUE_D_STAR.md  # Mathematical derivation
+│   └── THEORETICAL_DERIVATION_D_STAR.md  # Mathematical derivation
 ├── analyse_*.py                     # Analysis scripts
 └── src/                             # Core architecture
 ```
