@@ -24,9 +24,9 @@ This predicts two characteristic frequencies via `f = 432 / phi^D`:
 | Test | Script | Dataset | Result | p-value |
 |------|--------|---------|--------|---------|
 | f1 = 102 Hz | `analyse_cogitate_142Hz.py` | COGITATE iEEG (N=4) | Conscious > Unconscious | **0.027** |
-| f2 = 142 Hz | `analyse_elite_athletes_142Hz.py` | Elite Athletes (N=27) | Controls > Athletes | **0.0034** |
-| Task specificity | `analyse_ABT_vs_CCT.py` | ABT vs CCT tasks | 142 Hz differentiates tasks | **0.012** |
-| Neural efficiency | `analyse_athletes_vs_controls.py` | Athletes vs Controls | Opposite modulation | **0.018** |
+| f2 = 142 Hz | `analyse_elite_athletes_142Hz.py` | Elite Athletes (N=17) | Controls > Athletes | **0.0034** |
+| Task specificity | `analyse_ABT_vs_CCT.py` | ABT vs CCT (N=26) | 142 Hz differentiates tasks | **0.0029** |
+| Neural efficiency | `analyse_athletes_vs_controls.py` | Athletes vs Controls | Opposite modulation | **0.0041** |
 
 **All 4 predictions validated.**
 
