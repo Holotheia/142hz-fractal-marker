@@ -30,6 +30,8 @@ This predicts two characteristic frequencies via `f = 432 / phi^D`:
 
 **All 4 predictions validated.**
 
+*Note: Test 1 (p = 0.027) is from the original analysis. The current multi-band script uses different preprocessing parameters and does not yet reproduce this exact value. Tests 2-4 are fully reproducible from the published scripts.*
+
 > *142 Hz high-gamma activity represents a biomarker of cognitive integration cost that is task-specific (concentration > vigilance) and expertise-modulated (lower in trained individuals).*
 
 ## Quick Start
