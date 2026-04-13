@@ -1,0 +1,41 @@
+# Holotheia proprietary architecture — NEVER publish
+holotheia_architecture*.py
+simulations_grande_echelle*.py
+*morphofractal*.py
+*champ_morphique*.py
+*memoire_fractale*.py
+
+# Data files (too large for git)
+data/
+*.edf
+*.fif
+*.npy
+*.npz
+*.h5
+*.hdf5
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

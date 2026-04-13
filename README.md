@@ -1,7 +1,7 @@
 # The 142 Hz Signature: A Fractal Marker of Neural Efficiency
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18237860.svg)](https://doi.org/10.5281/zenodo.18237860)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgrey.svg)](https://creativecommons.org/licenses/by-nc-nd/4.0/)
 
 ## Overview
 
@@ -49,8 +49,7 @@ pip install -r requirements.txt
 ├── figures/                         # Publication figures (PNG + PDF)
 ├── docs/
 │   └── THEORETICAL_DERIVATION_D_STAR.md  # Mathematical derivation
-├── analyse_*.py                     # Analysis scripts
-└── src/                             # Core architecture
+└── analyse_*.py                     # Analysis scripts (4 tests)
 ```
 
 ## Data Sources
@@ -80,4 +79,6 @@ Contact: orelie@holotheia.io
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+CC BY-NC-ND 4.0 - See [LICENSE](LICENSE) for details.
+
+This work may be shared with attribution, but not modified or used commercially.

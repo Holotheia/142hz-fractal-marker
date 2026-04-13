@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
 """
-Analyse iEEG pour tester la prédiction f_Φ = 147 Hz
+Analyse iEEG pour tester la prédiction f_Φ ≈ 142 Hz
 
 Ce script analyse les données iEEG (ECoG/sEEG) pour détecter un pic spectral
-à 147 Hz corrélé avec les états de conscience.
+à 142 Hz corrélé avec les états de conscience.
+
+Prédiction théorique: f_Φ = 432 / φ^D* = 432 / 1.618^2.3107 ≈ 142.1 Hz
 
 Dataset cible: Open multi-center iEEG dataset (consciousness study)
 https://www.nature.com/articles/s41597-025-04833-z
@@ -24,13 +26,13 @@ warnings.filterwarnings('ignore')
 # Constantes HOLOTHEIA
 PHI = 1.618033988749895
 D_STAR = 2.3107
-F_PHI = 432 / (PHI ** D_STAR)  # ≈ 147 Hz
+F_PHI = 432 / (PHI ** D_STAR)  # ≈ 142.1 Hz
 
 print(f"Fréquence prédite: f_Φ = {F_PHI:.2f} Hz")
 
 
 class AnalyseHolotheiaIEEG:
-    """Analyse iEEG pour tester la prédiction 147 Hz."""
+    """Analyse iEEG pour tester la prédiction 142 Hz."""
 
     def __init__(self, sampling_rate=1000):
         """
@@ -39,7 +41,7 @@ class AnalyseHolotheiaIEEG:
         """
         self.fs = sampling_rate
         self.f_phi = F_PHI
-        self.band_of_interest = (140, 155)  # Bande autour de 147 Hz
+        self.band_of_interest = (135, 150)  # Bande autour de 142 Hz
         self.control_band = (120, 135)  # Bande contrôle
 
     def preprocess(self, data, notch_freq=50):
@@ -177,11 +179,11 @@ class AnalyseHolotheiaIEEG:
         peak_info = self.detect_peak(freqs, psd)
 
         # Puissance dans les bandes
-        power_147 = self.extract_band_power(freqs, psd, self.band_of_interest)
+        power_142 = self.extract_band_power(freqs, psd, self.band_of_interest)
         power_control = self.extract_band_power(freqs, psd, self.control_band)
 
         # Ratio normalisé
-        ratio = power_147 / (power_control + 1e-10)
+        ratio = power_142 / (power_control + 1e-10)
 
         return {
             'freqs': freqs,
@@ -190,7 +192,7 @@ class AnalyseHolotheiaIEEG:
             'peak_power': peak_info['peak_power'],
             'z_score': peak_info['z_score'],
             'is_significant': peak_info['is_significant'],
-            'power_147': power_147,
+            'power_142': power_142,
             'power_control': power_control,
             'ratio': ratio,
             'label': label
@@ -208,8 +210,8 @@ class AnalyseHolotheiaIEEG:
             dict avec statistiques de comparaison
         """
         # Extraire les métriques
-        power_conscious = [r['power_147'] for r in results_conscious]
-        power_unconscious = [r['power_147'] for r in results_unconscious]
+        power_conscious = [r['power_142'] for r in results_conscious]
+        power_unconscious = [r['power_142'] for r in results_unconscious]
 
         ratio_conscious = [r['ratio'] for r in results_conscious]
         ratio_unconscious = [r['ratio'] for r in results_unconscious]
@@ -244,7 +246,7 @@ class AnalyseHolotheiaIEEG:
             'hypothesis_supported': p_power < 0.05 and np.mean(power_conscious) > np.mean(power_unconscious)
         }
 
-    def plot_results(self, results, title="Analyse 147 Hz", save_path=None):
+    def plot_results(self, results, title="Analyse 142 Hz", save_path=None):
         """
         Visualise les résultats.
 
@@ -287,8 +289,8 @@ class AnalyseHolotheiaIEEG:
 
         # Métriques
         ax3 = axes[1, 0]
-        metrics = ['Power 147 Hz', 'Power Control', 'Ratio', 'Z-score']
-        values = [results['power_147'], results['power_control'],
+        metrics = ['Power 142 Hz', 'Power Control', 'Ratio', 'Z-score']
+        values = [results['power_142'], results['power_control'],
                   results['ratio'], results['z_score']]
         colors = ['#E94F37' if results['is_significant'] else '#2E86AB'] * 4
         colors[3] = '#28A745' if results['z_score'] > 2.5 else '#DC3545'
@@ -303,7 +305,7 @@ class AnalyseHolotheiaIEEG:
         ax4 = axes[1, 1]
         ax4.axis('off')
         verdict_text = f"""
-        RÉSULTATS ANALYSE 147 Hz
+        RÉSULTATS ANALYSE 142 Hz
         ========================
 
         Fréquence prédite: {self.f_phi:.2f} Hz
@@ -312,7 +314,7 @@ class AnalyseHolotheiaIEEG:
         Z-score:           {results['z_score']:.2f}
         Significatif:      {'OUI ✓' if results['is_significant'] else 'NON ✗'}
 
-        Ratio 147/control: {results['ratio']:.2f}
+        Ratio 142/control: {results['ratio']:.2f}
 
         VERDICT: {'HYPOTHÈSE SUPPORTÉE' if results['is_significant'] else 'PAS DE PIC SIGNIFICATIF'}
         """
@@ -342,15 +344,15 @@ class AnalyseHolotheiaIEEG:
                   comparison_results['power_unconscious_mean']]
         colors = ['#28A745', '#DC3545']
         ax1.bar(conditions, powers, color=colors)
-        ax1.set_ylabel('Puissance moyenne 140-155 Hz')
-        ax1.set_title(f"Puissance à 147 Hz\np = {comparison_results['power_p']:.4f}")
+        ax1.set_ylabel('Puissance moyenne 135-150 Hz')
+        ax1.set_title(f"Puissance à 142 Hz\np = {comparison_results['power_p']:.4f}")
 
         # Ratio comparison
         ax2 = axes[1]
         ratios = [comparison_results['ratio_conscious_mean'],
                   comparison_results['ratio_unconscious_mean']]
         ax2.bar(conditions, ratios, color=colors)
-        ax2.set_ylabel('Ratio 147 Hz / Contrôle')
+        ax2.set_ylabel('Ratio 142 Hz / Contrôle')
         ax2.set_title(f"Ratio normalisé\np = {comparison_results['ratio_p']:.4f}")
 
         # Percentage significant
@@ -385,11 +387,11 @@ def demo_synthetic():
     duration = 10  # secondes
     t = np.arange(0, duration, 1/fs)
 
-    # Créer un signal avec un pic à 147 Hz (condition "consciente")
+    # Créer un signal avec un pic à 142 Hz (condition "consciente")
     np.random.seed(42)
     noise = np.random.randn(len(t)) * 0.5
 
-    # Signal conscient: bruit + pic à 147 Hz
+    # Signal conscient: bruit + pic à 142 Hz
     signal_conscious = noise + 0.3 * np.sin(2 * np.pi * F_PHI * t)
 
     # Signal inconscient: juste du bruit
@@ -398,7 +400,7 @@ def demo_synthetic():
     # Analyser
     analyzer = AnalyseHolotheiaIEEG(sampling_rate=fs)
 
-    print("\nAnalyse condition CONSCIENTE (avec pic 147 Hz):")
+    print("\nAnalyse condition CONSCIENTE (avec pic 142 Hz):")
     results_conscious = analyzer.analyze_trial(signal_conscious, label='conscious')
     print(f"  Pic détecté à: {results_conscious['peak_freq']:.1f} Hz")
     print(f"  Z-score: {results_conscious['z_score']:.2f}")
@@ -448,13 +450,13 @@ def load_bids_ieeg(bids_path):
 def main():
     """Point d'entrée principal."""
     print("="*60)
-    print("HOLOTHEIA - Analyse iEEG pour prédiction 147 Hz")
+    print("HOLOTHEIA - Analyse iEEG pour prédiction 142 Hz")
     print("="*60)
     print(f"\nPrédiction théorique:")
     print(f"  D* = {D_STAR}")
     print(f"  φ = {PHI}")
     print(f"  f_Φ = 432 / φ^D* = {F_PHI:.2f} Hz")
-    print(f"\nBande d'intérêt: 140-155 Hz")
+    print(f"\nBande d'intérêt: 135-150 Hz")
     print(f"Seuil de significativité: z > 2.5")
 
     # Démonstration
