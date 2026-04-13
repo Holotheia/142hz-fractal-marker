@@ -1,0 +1,136 @@
+======================================================================
+ANALYSE COMPARATIVE ATHLETES vs CONTROLES - 142 Hz
+======================================================================
+f1 = 101.98 Hz (perception)
+f2 = 142.09 Hz (integration/concentration)
+Sujets trouves: 27
+
+Athlete Sub301:
+    ABT: z_102=25.2, z_142=6.5
+    CCT: z_102=1.7, z_142=1.4
+
+Athlete Sub302:
+    ABT: z_102=60.9, z_142=14.2
+    CCT: z_102=10.5, z_142=2.0
+
+Athlete Sub303:
+    ABT: z_102=177.8, z_142=28.6
+    CCT: z_102=7.0, z_142=4.2
+
+Athlete Sub304:
+    ABT: z_102=68.8, z_142=3.6
+    CCT: z_102=17.1, z_142=2.8
+
+Athlete Sub305:
+    ABT: z_102=13.4, z_142=19.0
+    CCT: z_102=16.7, z_142=13.5
+
+Athlete Sub307:
+    ABT: z_102=13.5, z_142=38.3
+    CCT: z_102=11.2, z_142=7.3
+
+Athlete Sub308:
+    ABT: z_102=19.1, z_142=14.2
+    CCT: z_102=38.1, z_142=20.9
+
+Athlete Sub309:
+    ABT: z_102=63.6, z_142=126.5
+    CCT: z_102=59.4, z_142=82.7
+
+Athlete Sub314:
+    ABT: z_102=28.2, z_142=24.3
+    CCT: z_102=0.9, z_142=1.1
+
+Athlete Sub315:
+    ABT: z_102=25.2, z_142=4.7
+    CCT: z_102=1.2, z_142=0.5
+
+Athlete Sub317:
+    ABT: z_102=17.3, z_142=53.3
+    CCT: z_102=16.2, z_142=15.2
+
+Athlete Sub318:
+    ABT: z_102=10.2, z_142=43.7
+    CCT: z_102=14.1, z_142=3.7
+
+Athlete Sub319:
+    ABT: z_102=46.0, z_142=44.7
+    CCT: z_102=37.0, z_142=17.6
+
+Control Sub001:
+    ABT: z_102=31.4, z_142=0.0
+    CCT: z_102=25.6, z_142=-0.2
+
+Control Sub010:
+    ABT: z_102=218.6, z_142=4.4
+    CCT: z_102=266.9, z_142=4.4
+
+Control Sub011:
+    ABT: z_102=1.0, z_142=1.6
+    CCT: z_102=1.5, z_142=1.8
+
+Control Sub012:
+    ABT: z_102=1.1, z_142=1.4
+    CCT: z_102=20.2, z_142=0.6
+
+Control Sub013:
+    ABT: z_102=18.2, z_142=0.5
+    CCT: z_102=1.3, z_142=1.7
+
+Control Sub014:
+    ABT: z_102=106.3, z_142=-0.0
+    CCT: z_102=56.7, z_142=-0.3
+
+Control Sub015:
+    ABT: z_102=78.7, z_142=0.9
+    CCT: z_102=136.5, z_142=2.5
+
+Control Sub016:
+    ABT: z_102=-0.8, z_142=-0.6
+    CCT: z_102=512.2, z_142=5.4
+
+Control Sub017:
+    ABT: z_102=76.0, z_142=0.1
+    CCT: z_102=16.8, z_142=-0.0
+
+Control Sub702:
+    ABT: z_102=8235.8, z_142=160.6
+    CCT: z_102=6458.2, z_142=123.5
+
+Control Sub703:
+    ABT: z_102=5867.1, z_142=276.4
+    CCT: Erreur - fichier Sub703_CCT_EEG.cdt.dpa manquant
+
+Control Sub704:
+    ABT: z_102=3226.8, z_142=37.7
+    CCT: z_102=1340.3, z_142=47.5
+
+Control Sub705:
+    ABT: z_102=4406.4, z_142=127.8
+    CCT: z_102=7356.7, z_142=103.9
+
+Control Sub723:
+    ABT: z_102=2369.5, z_142=180.7
+    CCT: z_102=517.6, z_142=51.9
+
+======================================================================
+COMPARAISON STATISTIQUE - TACHE CONCENTRATION (CCT)
+======================================================================
+
+142 Hz (prediction integration):
+  Athletes (n=13): 13.3 +/- 21.1
+  Controles (n=13): 26.3 +/- 41.2
+  p-value: 0.6444
+  Difference significative: Non
+  Taille d'effet (Cohen's d): -0.398
+
+102 Hz (perception):
+  Athletes (n=13): 17.8 +/- 16.6
+  Controles (n=13): 1285.4 +/- 2430.1
+  p-value: 0.0089
+
+======================================================================
+CONCLUSION
+======================================================================
+
+Pas de difference claire entre athletes et controles a 142 Hz

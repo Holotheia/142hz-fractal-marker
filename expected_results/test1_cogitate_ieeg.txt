@@ -1,0 +1,117 @@
+======================================================================
+ANALYSE COGITATE iEEG - TEST PREDICTION 142 Hz
+======================================================================
+
+Constantes theoriques:
+  phi (golden ratio) = 1.6180339887
+  D* (dimension optimale) = 2.3107
+  f_Phi = 432 / phi^D* = 142.09 Hz
+
+Bande d'interet: 135-150 Hz
+======================================================================
+
+Sujets trouves: 4
+  - sub-CE107
+  - sub-CE110
+  - sub-CF102
+  - sub-CF104
+
+============================================================
+ANALYSE SUJET: sub-CE107
+============================================================
+  Chargement: sub-CE107_ses-1_task-Dur_ieeg.vhdr
+  - Sampling rate: 2048.0 Hz
+  - Channels: 170
+  - Duration: 3518.0 s
+  - Evenements conscients: 388
+  - Evenements inconscients: 323
+
+  RESULTATS sub-CE107:
+  - Z-score moyen (conscient): -0.789
+  - Z-score moyen (inconscient): -0.667
+  - Difference: -0.122
+  - p-value (Mann-Whitney): 0.8534
+  - Frequence pic conscient: 140.1 Hz
+  - Frequence pic inconscient: 139.8 Hz
+  - SIGNIFICATIF: NON
+
+============================================================
+ANALYSE SUJET: sub-CE110
+============================================================
+  Chargement: sub-CE110_ses-1_task-Dur_ieeg.vhdr
+  - Sampling rate: 2048.0 Hz
+  - Channels: 188
+  - Duration: 4704.0 s
+  - Evenements conscients: 354
+  - Evenements inconscients: 336
+
+  RESULTATS sub-CE110:
+  - Z-score moyen (conscient): -0.808
+  - Z-score moyen (inconscient): -0.749
+  - Difference: -0.059
+  - p-value (Mann-Whitney): 0.6387
+  - Frequence pic conscient: 141.4 Hz
+  - Frequence pic inconscient: 140.1 Hz
+  - SIGNIFICATIF: NON
+
+============================================================
+ANALYSE SUJET: sub-CF102
+============================================================
+  Chargement: sub-CF102_ses-1_task-Dur_ieeg.vhdr
+  - Sampling rate: 2048.0 Hz
+  - Channels: 136
+  - Duration: 2471.0 s
+  - Evenements conscients: 395
+  - Evenements inconscients: 322
+
+  RESULTATS sub-CF102:
+  - Z-score moyen (conscient): -0.524
+  - Z-score moyen (inconscient): -0.524
+  - Difference: -0.001
+  - p-value (Mann-Whitney): 0.9295
+  - Frequence pic conscient: 140.4 Hz
+  - Frequence pic inconscient: 140.6 Hz
+  - SIGNIFICATIF: NON
+
+============================================================
+ANALYSE SUJET: sub-CF104
+============================================================
+  Chargement: sub-CF104_ses-1_task-Dur_ieeg.vhdr
+  - Sampling rate: 2048.0 Hz
+  - Channels: 118
+  - Duration: 2373.0 s
+  - Evenements conscients: 377
+  - Evenements inconscients: 333
+
+  RESULTATS sub-CF104:
+  - Z-score moyen (conscient): -0.384
+  - Z-score moyen (inconscient): -0.417
+  - Difference: 0.033
+  - p-value (Mann-Whitney): 0.6361
+  - Frequence pic conscient: 140.2 Hz
+  - Frequence pic inconscient: 142.9 Hz
+  - SIGNIFICATIF: NON
+
+======================================================================
+RESUME GLOBAL - TEST PREDICTION 142 Hz
+======================================================================
+
+Nombre de sujets analyses: 4
+Sujets avec effet significatif: 0/4
+
+Moyennes globales:
+  - Z-score conscient: -0.626
+  - Z-score inconscient: -0.589
+  - Difference moyenne: -0.037
+  - p-value combinee (Fisher): 0.971809
+
+----------------------------------------------------------------------
+INTERPRETATION:
+----------------------------------------------------------------------
+RESULTAT NEGATIF
+Aucune difference significative observee.
+La prediction n'est pas supportee par ces donnees.
+
+Prediction theorique: f_Phi = 142.09 Hz
+Frequence observee (conscient): 140.5 Hz
+Ecart: 1.6 Hz (1.1%)

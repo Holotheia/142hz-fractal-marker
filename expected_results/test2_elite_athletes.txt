@@ -1,0 +1,102 @@
+Constantes theoriques:
+  phi = 1.6180339887
+  D* = 2.3107
+  f1 = 432/phi^3 = 101.98 Hz (perception)
+  f2 = 432/phi^D* = 142.09 Hz (integration)
+
+======================================================================
+ANALYSE ELITE ATHLETES - TEST PREDICTION 142 Hz
+======================================================================
+
+============================================================
+EXPERIENCE: ABT
+============================================================
+
+Parametres CDT:
+  Channels: 67
+  Samples: 636100
+  Sampling rate: 1000.0 Hz
+  Data format: 6
+  Duration: 636.1 seconds
+
+Data shape: (67, 636100)
+Nyquist frequency: 500.0 Hz
+
+--- Analyse PSD globale ---
+  f1 = 102 Hz: z-score = 2369.474
+  f2 = 142 Hz: z-score = 180.728
+
+--- Analyse par segments (30s) ---
+  Nombre de segments: 21
+
+  f1 = 102 Hz:
+    Mean z-score: 1724.494 +/- 383.616
+    Range: [1025.897, 2222.854]
+
+  f2 = 142 Hz:
+    Mean z-score: 145.328 +/- 76.456
+    Range: [60.473, 333.075]
+
+  Evolution temporelle (142 Hz):
+    1ere moitie: 144.432
+    2eme moitie: 146.142
+    p-value: 0.8053
+
+============================================================
+EXPERIENCE: CCT
+============================================================
+
+Parametres CDT:
+  Channels: 67
+  Samples: 4730200
+  Sampling rate: 1000.0 Hz
+  Data format: 6
+  Duration: 4730.2 seconds
+
+Data shape: (67, 4730200)
+Nyquist frequency: 500.0 Hz
+
+--- Analyse PSD globale ---
+  f1 = 102 Hz: z-score = 517.557
+  f2 = 142 Hz: z-score = 51.921
+
+--- Analyse par segments (30s) ---
+  Nombre de segments: 157
+
+  f1 = 102 Hz:
+    Mean z-score: 1261.297 +/- 915.909
+    Range: [5.872, 4213.173]
+
+  f2 = 142 Hz:
+    Mean z-score: 158.649 +/- 163.318
+    Range: [0.815, 964.327]
+
+  Evolution temporelle (142 Hz):
+    1ere moitie: 160.796
+    2eme moitie: 156.528
+    p-value: 0.6144
+
+======================================================================
+RESUME COMPARATIF ABT vs CCT
+======================================================================
+
+Metrique                       ABT                  CCT
+----------------------------------------------------------------------
+f = 102 Hz (z-score global)    2369.474             517.557
+f = 142 Hz (z-score global)    180.728              51.921
+
+142 Hz - Test ABT vs CCT:
+  ABT mean: 145.328
+  CCT mean: 158.649
+  p-value: 0.3323
+  Significatif: Non
+
+======================================================================
+CONCLUSION
+======================================================================
+
+Resultats globaux 142 Hz:
+  Mean z-score: 157.077
+  Segments positifs: 100.0%
+
+SIGNAL POSITIF a 142 Hz detecte!
