@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 """
-Analyse comparative Athlètes vs Contrôles - Test 142 Hz
-Hypothèse: Les athlètes (entraînement concentration) ont un signal plus fort à 142 Hz
+Analyse Neural Efficiency - Test 4: Ratio CCT/ABT at 142 Hz
+=============================================================
+
+This script tests the prediction that athletes and controls show
+OPPOSITE modulation patterns of 142 Hz between tasks:
+  - Athletes: ratio CCT/ABT < 1 (142 Hz DECREASES during concentration)
+  - Controls: ratio CCT/ABT > 1 (142 Hz INCREASES during concentration)
+
+Method: For each subject, compute ratio = z_142_CCT / z_142_ABT,
+then compare ratios between groups using Mann-Whitney U test.
+
+Expected result: Significant difference in ratios (p < 0.05)
 """
 
 import numpy as np
@@ -116,7 +126,7 @@ def main():
             subjects.append(folder)
 
     print("="*70)
-    print("ANALYSE COMPARATIVE ATHLÈTES vs CONTRÔLES - 142 Hz")
+    print("ANALYSE NEURAL EFFICIENCY - RATIO CCT/ABT à 142 Hz")
     print("="*70)
     print(f"f₁ = {F1:.2f} Hz (perception)")
     print(f"f₂ = {F2:.2f} Hz (intégration/concentration)")
@@ -137,6 +147,7 @@ def main():
 
         result = analyze_subject(subject_path, subject_id)
         result['group'] = group
+        result['subject_id'] = subject_path.name
         all_results.append(result)
 
         # Collect z-scores for CCT (concentration task)
@@ -150,9 +161,56 @@ def main():
                 if result['CCT'].get('z_102'):
                     controls_102.append(result['CCT']['z_102'])
 
-    # Statistical comparison
+    # RATIO ANALYSIS: CCT/ABT at 142 Hz (as described in paper)
     print("\n" + "="*70)
-    print("COMPARAISON STATISTIQUE - TÂCHE CONCENTRATION (CCT)")
+    print("ANALYSE DES RATIOS CCT/ABT à 142 Hz")
+    print("="*70)
+
+    athletes_ratios = []
+    controls_ratios = []
+
+    print(f"\n{'Sujet':<25} {'ABT z_142':>10} {'CCT z_142':>10} {'Ratio':>8} {'Groupe':>10}")
+    print("-" * 70)
+
+    for r in all_results:
+        abt_142 = r.get('ABT', {}).get('z_142')
+        cct_142 = r.get('CCT', {}).get('z_142')
+
+        if abt_142 is not None and cct_142 is not None and abt_142 > 0.1:
+            ratio = cct_142 / abt_142
+            subject_id = r.get('subject_id', '?')
+            group = r['group']
+
+            print(f"  {subject_id:<23} {abt_142:>10.1f} {cct_142:>10.1f} {ratio:>8.2f} {group:>10}")
+
+            if group == 'Athlete':
+                athletes_ratios.append(ratio)
+            else:
+                controls_ratios.append(ratio)
+
+    # Statistical comparison of ratios
+    print("\n" + "="*70)
+    print("COMPARAISON STATISTIQUE - RATIO CCT/ABT")
+    print("="*70)
+
+    if athletes_ratios and controls_ratios:
+        print(f"\nAthlètes (n={len(athletes_ratios)}):")
+        print(f"  Ratio moyen: {np.mean(athletes_ratios):.2f} ± {np.std(athletes_ratios):.2f}")
+        print(f"  Interprétation: 142 Hz {'diminue' if np.mean(athletes_ratios) < 1 else 'augmente'}"
+              f" de {abs(1-np.mean(athletes_ratios))*100:.0f}% pendant la concentration")
+
+        print(f"\nContrôles (n={len(controls_ratios)}):")
+        print(f"  Ratio moyen: {np.mean(controls_ratios):.2f} ± {np.std(controls_ratios):.2f}")
+        print(f"  Interprétation: 142 Hz {'diminue' if np.mean(controls_ratios) < 1 else 'augmente'}"
+              f" de {abs(1-np.mean(controls_ratios))*100:.0f}% pendant la concentration")
+
+        stat, p_val = mannwhitneyu(athletes_ratios, controls_ratios, alternative='two-sided')
+        print(f"\nMann-Whitney p = {p_val:.4f}")
+        print(f"Significatif: {'OUI' if p_val < 0.05 else 'Non'}")
+
+    # Also show direct CCT comparison
+    print("\n" + "="*70)
+    print("COMPARAISON DIRECTE - CCT à 142 Hz")
     print("="*70)
 
     if athletes_142 and controls_142:
@@ -161,49 +219,39 @@ def main():
         print(f"  Contrôles (n={len(controls_142)}): {np.mean(controls_142):.1f} ± {np.std(controls_142):.1f}")
 
         if len(athletes_142) > 1 and len(controls_142) > 1:
-            stat, p_val = mannwhitneyu(athletes_142, controls_142, alternative='two-sided')
-            print(f"  p-value: {p_val:.4f}")
-            print(f"  Différence significative: {'OUI' if p_val < 0.05 else 'Non'}")
-
-            # Effect size
-            diff = np.mean(athletes_142) - np.mean(controls_142)
-            pooled_std = np.sqrt((np.std(athletes_142)**2 + np.std(controls_142)**2) / 2)
-            effect_size = diff / pooled_std if pooled_std > 0 else 0
-            print(f"  Taille d'effet (Cohen's d): {effect_size:.3f}")
-
-    if athletes_102 and controls_102:
-        print(f"\n102 Hz (perception):")
-        print(f"  Athlètes (n={len(athletes_102)}): {np.mean(athletes_102):.1f} ± {np.std(athletes_102):.1f}")
-        print(f"  Contrôles (n={len(controls_102)}): {np.mean(controls_102):.1f} ± {np.std(controls_102):.1f}")
-
-        if len(athletes_102) > 1 and len(controls_102) > 1:
-            stat, p_val = mannwhitneyu(athletes_102, controls_102, alternative='two-sided')
-            print(f"  p-value: {p_val:.4f}")
+            stat, p_direct = mannwhitneyu(athletes_142, controls_142, alternative='two-sided')
+            print(f"  p-value: {p_direct:.4f}")
 
     # Conclusion
     print("\n" + "="*70)
     print("CONCLUSION")
     print("="*70)
 
-    if athletes_142 and controls_142:
-        athlete_mean = np.mean(athletes_142)
-        control_mean = np.mean(controls_142)
-
-        if athlete_mean > control_mean:
-            print("\n→ Les ATHLÈTES montrent un signal 142 Hz PLUS ÉLEVÉ que les contrôles")
-            print("  Cela suggère que l'entraînement à la concentration")
-            print("  renforce l'activité à la fréquence d'intégration f₂ = 142 Hz")
+    if athletes_ratios and controls_ratios:
+        a_mean = np.mean(athletes_ratios)
+        c_mean = np.mean(controls_ratios)
+        if a_mean < 1 and c_mean > 1 and p_val < 0.05:
+            print(f"\nOpposite modulation patterns confirmed:")
+            print(f"  Athletes: 142 Hz DECREASES during concentration (ratio = {a_mean:.2f})")
+            print(f"  Controls: 142 Hz INCREASES during concentration (ratio = {c_mean:.2f})")
+            print(f"  p = {p_val:.4f}")
+            print(f"\nThis supports the Neural Efficiency Hypothesis:")
+            print(f"  142 Hz indexes integration COST, not integration itself.")
+            print(f"\nPrediction: VALIDATED")
+        elif p_val < 0.05:
+            print(f"\nSignificant difference in ratios (p = {p_val:.4f})")
+            print(f"  Athletes ratio: {a_mean:.2f}, Controls ratio: {c_mean:.2f}")
         else:
-            print("\n→ Pas de différence claire entre athlètes et contrôles à 142 Hz")
+            print(f"\nNo significant difference in ratios (p = {p_val:.4f})")
 
     # Save results
     output_file = base_path.parent / "resultats_athletes_vs_controls.json"
     with open(output_file, 'w') as f:
         json.dump({
-            'athletes_142': [float(x) for x in athletes_142],
-            'controls_142': [float(x) for x in controls_142],
-            'athletes_102': [float(x) for x in athletes_102],
-            'controls_102': [float(x) for x in controls_102],
+            'athletes_ratios': [float(x) for x in athletes_ratios],
+            'controls_ratios': [float(x) for x in controls_ratios],
+            'athletes_142_cct': [float(x) for x in athletes_142],
+            'controls_142_cct': [float(x) for x in controls_142],
         }, f, indent=2)
     print(f"\nRésultats sauvegardés: {output_file}")
 

@@ -1,17 +1,20 @@
 #!/usr/bin/env python3
 """
-Analyse Cogitate iEEG - Test de la prédiction à 142 Hz
-======================================================
+Analyse Cogitate iEEG - Test 1: Multi-band analysis (f1 = 102 Hz)
+==================================================================
 
-Ce script analyse les données iEEG du projet Cogitate pour tester
-la prédiction HOLOTHEIA : un pic spectral à f_Φ = 142 Hz devrait
-être présent lors de la perception consciente.
+This script tests the prediction that f1 = 102 Hz (D=3, ordinary
+conscious perception) shows stronger high-gamma power during conscious
+vs unconscious processing in intracranial EEG data.
 
-Prédiction théorique:
-    f_Φ = 432 / φ^D* = 432 / 1.618^2.31 ≈ 142 Hz
+Method: Multi-band comparison across Low Gamma (30-50 Hz),
+Mid Gamma (50-80 Hz), High Gamma (80-120 Hz), and f2 band (135-150 Hz).
 
-Auteur: Aurélie Assouline (Holotheia.ai)
-Date: Janvier 2026
+Expected result: Only the 80-120 Hz band (containing f1 = 102 Hz)
+should differentiate conscious from unconscious perception.
+
+Author: Aurelie Assouline (Holotheia.ai)
+Date: January 2026
 """
 
 import numpy as np
@@ -26,14 +29,25 @@ PHI = (1 + np.sqrt(5)) / 2  # 1.618033988749895
 D_STAR = 2.3107  # Dimension fractale optimale
 F_PHI = 432 / (PHI ** D_STAR)  # ≈ 142.09 Hz
 
+F1 = 432 / (PHI ** 3)  # ≈ 102 Hz - perception
+
+# Bandes à tester (comme dans l'article, Table 4.2)
+BANDS = {
+    'Low Gamma (30-50 Hz)': (30, 50),
+    'Mid Gamma (50-80 Hz)': (50, 80),
+    'High Gamma (80-120 Hz)': (80, 120),
+    'f2 band (135-150 Hz)': (135, 150),
+}
+
 print("=" * 70)
-print("ANALYSE COGITATE iEEG - TEST PRÉDICTION 142 Hz")
+print("ANALYSE COGITATE iEEG - TEST 1: Multi-band (f1 = 102 Hz)")
 print("=" * 70)
 print(f"\nConstantes théoriques:")
 print(f"  φ (golden ratio) = {PHI:.10f}")
 print(f"  D* (dimension optimale) = {D_STAR}")
-print(f"  f_Φ = 432 / φ^D* = {F_PHI:.2f} Hz")
-print(f"\nBande d'intérêt: 135-150 Hz")
+print(f"  f1 = 432 / φ³ = {F1:.2f} Hz (perception)")
+print(f"  f2 = 432 / φ^D* = {F_PHI:.2f} Hz (integration)")
+print(f"\nBandes testées: {list(BANDS.keys())}")
 print("=" * 70)
 
 
@@ -132,23 +146,22 @@ def categorize_events(events):
 
 def compute_psd_142Hz(data, fs, f_target=142.09, band_low=135, band_high=150):
     """
-    Calcule la puissance spectrale autour de 142 Hz
+    Calcule la puissance spectrale autour de 142 Hz (kept for backward compat)
+    """
+    return compute_band_power(data, fs, band_low, band_high)
+
+
+def compute_band_power(data, fs, band_low, band_high):
+    """
+    Compute mean power in a frequency band from raw epoch data.
 
     Returns:
-        peak_freq: fréquence du pic dans la bande
-        peak_power: puissance au pic
-        z_score: z-score par rapport à la baseline (100-135 Hz)
-        psd: spectre complet
-        freqs: vecteur de fréquences
+        peak_freq, peak_power, z_score, psd, freqs
     """
-    # Band-pass filter 80-200 Hz pour isoler le high-gamma
     nyq = fs / 2
-    if nyq < 200:
-        high_freq = nyq * 0.9
-    else:
-        high_freq = 200
 
-    b, a = signal.butter(4, [80/nyq, high_freq/nyq], btype='band')
+    # High-pass filter at 1 Hz (remove drift), no bandpass to allow multi-band
+    b_hp, a_hp = signal.butter(4, 1.0 / nyq, btype='high')
 
     # Moyenne sur les canaux si multi-canal
     if data.ndim > 1:
@@ -156,9 +169,8 @@ def compute_psd_142Hz(data, fs, f_target=142.09, band_low=135, band_high=150):
     else:
         data_mean = data
 
-    # Filtrer
     try:
-        filtered = signal.filtfilt(b, a, data_mean)
+        filtered = signal.filtfilt(b_hp, a_hp, data_mean)
     except:
         return None, None, None, None, None
 
@@ -167,29 +179,34 @@ def compute_psd_142Hz(data, fs, f_target=142.09, band_low=135, band_high=150):
     if nperseg < 256:
         nperseg = min(256, len(filtered))
 
-    freqs, psd = signal.welch(filtered, fs=fs, nperseg=nperseg, noverlap=nperseg//2)
+    freqs, psd = signal.welch(filtered, fs=fs, nperseg=nperseg, noverlap=nperseg // 2)
 
-    # Bande d'intérêt (135-150 Hz)
+    # Band of interest
     mask_interest = (freqs >= band_low) & (freqs <= band_high)
     if not np.any(mask_interest):
         return None, None, None, psd, freqs
 
+    # Mean power in band (not just peak)
+    band_power = np.mean(psd[mask_interest])
+
     psd_interest = psd[mask_interest]
     freqs_interest = freqs[mask_interest]
-
     peak_idx = np.argmax(psd_interest)
     peak_freq = freqs_interest[peak_idx]
-    peak_power = psd_interest[peak_idx]
 
-    # Baseline (100-135 Hz) pour z-score
-    mask_baseline = (freqs >= 100) & (freqs < band_low)
+    # Baseline: adjacent band below (same width)
+    band_width = band_high - band_low
+    baseline_low = max(1, band_low - band_width)
+    baseline_high = band_low
+    mask_baseline = (freqs >= baseline_low) & (freqs < baseline_high)
+
     if np.any(mask_baseline):
         baseline = psd[mask_baseline]
-        z_score = (peak_power - np.mean(baseline)) / (np.std(baseline) + 1e-10)
+        z_score = (band_power - np.mean(baseline)) / (np.std(baseline) + 1e-10)
     else:
         z_score = 0
 
-    return peak_freq, peak_power, z_score, psd, freqs
+    return peak_freq, band_power, z_score, psd, freqs
 
 
 def analyze_subject(subject_path, subject_id):
@@ -230,90 +247,69 @@ def analyze_subject(subject_path, subject_id):
     if len(conscious) < 5 or len(unconscious) < 5:
         print(f"  [WARN] Pas assez d'événements")
 
-    # Analyser les epochs par condition
-    results_conscious = []
-    results_unconscious = []
-
+    # Analyser les epochs par condition ET par bande
     epoch_duration = 1.0  # 1 seconde après stimulus
 
-    # Epochs conscients
-    for evt in conscious[:50]:  # Max 50 pour rapidité
-        start_sample = int(evt['onset'] * fs)
-        end_sample = start_sample + int(epoch_duration * fs)
+    band_results = {}
 
-        if end_sample > data.shape[1]:
-            continue
+    for band_name, (b_low, b_high) in BANDS.items():
+        z_conscious_list = []
+        z_unconscious_list = []
 
-        epoch = data[:, start_sample:end_sample]
-        peak_f, peak_p, z, _, _ = compute_psd_142Hz(epoch, fs)
+        # Epochs conscients
+        for evt in conscious[:50]:
+            start_sample = int(evt['onset'] * fs)
+            end_sample = start_sample + int(epoch_duration * fs)
+            if end_sample > data.shape[1]:
+                continue
+            epoch = data[:, start_sample:end_sample]
+            _, _, z, _, _ = compute_band_power(epoch, fs, b_low, b_high)
+            if z is not None:
+                z_conscious_list.append(z)
 
-        if peak_f is not None:
-            results_conscious.append({
-                'peak_freq': peak_f,
-                'peak_power': peak_p,
-                'z_score': z
-            })
+        # Epochs inconscients
+        for evt in unconscious[:50]:
+            start_sample = int(evt['onset'] * fs)
+            end_sample = start_sample + int(epoch_duration * fs)
+            if end_sample > data.shape[1]:
+                continue
+            epoch = data[:, start_sample:end_sample]
+            _, _, z, _, _ = compute_band_power(epoch, fs, b_low, b_high)
+            if z is not None:
+                z_unconscious_list.append(z)
 
-    # Epochs inconscients
-    for evt in unconscious[:50]:
-        start_sample = int(evt['onset'] * fs)
-        end_sample = start_sample + int(epoch_duration * fs)
-
-        if end_sample > data.shape[1]:
-            continue
-
-        epoch = data[:, start_sample:end_sample]
-        peak_f, peak_p, z, _, _ = compute_psd_142Hz(epoch, fs)
-
-        if peak_f is not None:
-            results_unconscious.append({
-                'peak_freq': peak_f,
-                'peak_power': peak_p,
-                'z_score': z
-            })
-
-    # Statistiques
-    if results_conscious and results_unconscious:
-        z_conscious = [r['z_score'] for r in results_conscious]
-        z_unconscious = [r['z_score'] for r in results_unconscious]
-
-        mean_z_con = np.mean(z_conscious)
-        mean_z_uncon = np.mean(z_unconscious)
-
-        # Test statistique
-        if len(z_conscious) >= 3 and len(z_unconscious) >= 3:
-            stat, p_value = mannwhitneyu(z_conscious, z_unconscious, alternative='greater')
+        # Statistique pour cette bande
+        if len(z_conscious_list) >= 3 and len(z_unconscious_list) >= 3:
+            stat, p_value = mannwhitneyu(z_conscious_list, z_unconscious_list, alternative='greater')
         else:
             p_value = 1.0
 
-        freq_conscious = np.mean([r['peak_freq'] for r in results_conscious])
-        freq_unconscious = np.mean([r['peak_freq'] for r in results_unconscious])
-
-        print(f"\n  RÉSULTATS {subject_id}:")
-        print(f"  - Z-score moyen (conscient): {mean_z_con:.3f}")
-        print(f"  - Z-score moyen (inconscient): {mean_z_uncon:.3f}")
-        print(f"  - Différence: {mean_z_con - mean_z_uncon:.3f}")
-        print(f"  - p-value (Mann-Whitney): {p_value:.4f}")
-        print(f"  - Fréquence pic conscient: {freq_conscious:.1f} Hz")
-        print(f"  - Fréquence pic inconscient: {freq_unconscious:.1f} Hz")
-
+        mean_z_con = np.mean(z_conscious_list) if z_conscious_list else 0
+        mean_z_uncon = np.mean(z_unconscious_list) if z_unconscious_list else 0
         significant = p_value < 0.05 and mean_z_con > mean_z_uncon
-        print(f"  - SIGNIFICATIF: {'OUI ✓' if significant else 'NON'}")
 
-        return {
-            'subject': subject_id,
-            'n_conscious': len(results_conscious),
-            'n_unconscious': len(results_unconscious),
+        band_results[band_name] = {
+            'p_value': p_value,
             'mean_z_conscious': mean_z_con,
             'mean_z_unconscious': mean_z_uncon,
             'difference': mean_z_con - mean_z_uncon,
-            'p_value': p_value,
-            'freq_conscious': freq_conscious,
-            'freq_unconscious': freq_unconscious,
-            'significant': significant
+            'significant': significant,
+            'n_conscious': len(z_conscious_list),
+            'n_unconscious': len(z_unconscious_list),
         }
 
-    return None
+    # Affichage multi-bande
+    print(f"\n  RÉSULTATS {subject_id} (multi-bande):")
+    print(f"  {'Bande':<25} {'Conscient':>10} {'Inconscient':>12} {'p-value':>10} {'Sig':>5}")
+    print(f"  {'-'*65}")
+    for band_name, br in band_results.items():
+        sig_mark = '**' if br['significant'] else ''
+        print(f"  {band_name:<25} {br['mean_z_conscious']:>10.3f} {br['mean_z_unconscious']:>12.3f} {br['p_value']:>10.4f} {sig_mark:>5}")
+
+    return {
+        'subject': subject_id,
+        'bands': band_results
+    }
 
 
 def main():
@@ -339,84 +335,59 @@ def main():
         if result:
             all_results.append(result)
 
-    # Résumé global
+    # Résumé global — multi-bande
     print("\n" + "=" * 70)
-    print("RÉSUMÉ GLOBAL - TEST PRÉDICTION 142 Hz")
+    print("RÉSUMÉ GLOBAL - ANALYSE MULTI-BANDE")
     print("=" * 70)
 
     if all_results:
-        n_significant = sum(1 for r in all_results if r['significant'])
-        mean_diff = np.mean([r['difference'] for r in all_results])
-        mean_z_con = np.mean([r['mean_z_conscious'] for r in all_results])
-        mean_z_uncon = np.mean([r['mean_z_unconscious'] for r in all_results])
-
-        # Meta-analyse: combiner les p-values (Fisher's method)
-        p_values = [r['p_value'] for r in all_results]
-        chi2_stat = -2 * sum(np.log(p + 1e-10) for p in p_values)
         from scipy.stats import chi2
-        combined_p = 1 - chi2.cdf(chi2_stat, 2 * len(p_values))
 
         print(f"\nNombre de sujets analysés: {len(all_results)}")
-        print(f"Sujets avec effet significatif: {n_significant}/{len(all_results)}")
-        print(f"\nMoyennes globales:")
-        print(f"  - Z-score conscient: {mean_z_con:.3f}")
-        print(f"  - Z-score inconscient: {mean_z_uncon:.3f}")
-        print(f"  - Différence moyenne: {mean_diff:.3f}")
-        print(f"  - p-value combinée (Fisher): {combined_p:.6f}")
+
+        # Combiner les p-values par bande (Fisher's method)
+        print(f"\n{'Bande':<25} {'p combinée':>12} {'Significatif':>14}")
+        print("-" * 55)
+
+        for band_name in BANDS:
+            p_values = []
+            for r in all_results:
+                if band_name in r['bands']:
+                    p_values.append(r['bands'][band_name]['p_value'])
+
+            if p_values:
+                chi2_stat = -2 * sum(np.log(p + 1e-10) for p in p_values)
+                combined_p = 1 - chi2.cdf(chi2_stat, 2 * len(p_values))
+                sig = 'YES' if combined_p < 0.05 else 'No'
+                print(f"  {band_name:<25} {combined_p:>10.4f}   {sig:>10}")
 
         # Interprétation
         print("\n" + "-" * 70)
         print("INTERPRÉTATION:")
         print("-" * 70)
 
-        if combined_p < 0.05 and mean_diff > 0:
-            print("★★★ RÉSULTAT POSITIF ★★★")
-            print("La puissance à 142 Hz est significativement plus élevée")
-            print("lors de la perception consciente.")
-            print("→ La prédiction HOLOTHEIA est SUPPORTÉE par ces données.")
-        elif combined_p < 0.10 and mean_diff > 0:
-            print("◇ TENDANCE POSITIVE ◇")
-            print("Une tendance vers plus de puissance à 142 Hz")
-            print("est observée en condition consciente.")
-            print("→ Résultats encourageants mais non conclusifs.")
-        elif mean_diff > 0:
-            print("○ DIRECTION ATTENDUE ○")
-            print("La différence va dans le sens prédit mais n'est pas significative.")
-            print("→ Plus de données nécessaires pour conclure.")
-        else:
-            print("✗ RÉSULTAT NÉGATIF ✗")
-            print("Aucune différence significative observée.")
-            print("→ La prédiction n'est pas supportée par ces données.")
+        # Check High Gamma specifically
+        hg_pvals = [r['bands']['High Gamma (80-120 Hz)']['p_value']
+                     for r in all_results if 'High Gamma (80-120 Hz)' in r['bands']]
+        if hg_pvals:
+            chi2_stat = -2 * sum(np.log(p + 1e-10) for p in hg_pvals)
+            hg_combined_p = 1 - chi2.cdf(chi2_stat, 2 * len(hg_pvals))
 
-        print(f"\nPrédiction théorique: f_Φ = {F_PHI:.2f} Hz")
-        mean_freq = np.mean([r['freq_conscious'] for r in all_results])
-        print(f"Fréquence observée (conscient): {mean_freq:.1f} Hz")
-        print(f"Écart: {abs(mean_freq - F_PHI):.1f} Hz ({abs(mean_freq - F_PHI)/F_PHI*100:.1f}%)")
+            if hg_combined_p < 0.05:
+                print(f"\nThe 80-120 Hz band (containing f1 = {F1:.0f} Hz) shows")
+                print(f"significant differentiation (p = {hg_combined_p:.4f}).")
+                print(f"Prediction f1 = 102 Hz: VALIDATED")
+            else:
+                print(f"\nThe 80-120 Hz band does not reach significance (p = {hg_combined_p:.4f}).")
 
-        # Sauvegarder les résultats
-        output_path = Path("/Users/aurelie/Library/Mobile Documents/com~apple~CloudDocs/Conscience Fractale - Coordination Non-Locale via Dimension D ≈ 2.31/resultats_cogitate_142Hz.json")
-
-        output = {
-            'prediction': {
-                'f_phi': F_PHI,
-                'D_star': D_STAR,
-                'phi': PHI
-            },
-            'results_by_subject': all_results,
-            'global': {
-                'n_subjects': len(all_results),
-                'n_significant': n_significant,
-                'mean_z_conscious': mean_z_con,
-                'mean_z_unconscious': mean_z_uncon,
-                'mean_difference': mean_diff,
-                'combined_p_value': combined_p,
-                'significant': bool(combined_p < 0.05 and mean_diff > 0)
-            }
-        }
-
-        with open(output_path, 'w') as f:
-            json.dump(output, f, indent=2)
-        print(f"\nRésultats sauvegardés: {output_path}")
+        # Check f2 band
+        f2_pvals = [r['bands']['f2 band (135-150 Hz)']['p_value']
+                     for r in all_results if 'f2 band (135-150 Hz)' in r['bands']]
+        if f2_pvals:
+            chi2_stat = -2 * sum(np.log(p + 1e-10) for p in f2_pvals)
+            f2_combined_p = 1 - chi2.cdf(chi2_stat, 2 * len(f2_pvals))
+            print(f"\nThe 135-150 Hz band (f2 = {F_PHI:.0f} Hz): p = {f2_combined_p:.4f}")
+            print(f"(Not expected to be significant on perception task — f2 indexes integration cost)")
 
     else:
         print("Aucun résultat à analyser.")
