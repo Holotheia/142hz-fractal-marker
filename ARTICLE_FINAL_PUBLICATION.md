@@ -24,9 +24,9 @@ We propose that conscious processing is characterized by **two distinct frequenc
 | Test | Dataset | Result | p-value |
 |------|---------|--------|---------|
 | f₁ = 102 Hz | COGITATE iEEG (N=4) | Conscious > Unconscious | **0.027** |
-| f₂ = 142 Hz | Elite Athletes (N=13) | Controls > Athletes | **0.009** |
-| 142 Hz task-specificity | Elite Athletes (N=20) | CCT ≠ ABT | **0.012** |
-| 142 Hz expert effect | Elite Athletes (N=18) | Opposite direction | **0.018** |
+| f₂ = 142 Hz | Elite Athletes (N=17) | Controls > Athletes | **0.0034** |
+| 142 Hz task-specificity | Elite Athletes (N=26) | CCT ≠ ABT | **0.0029** |
+| 142 Hz expert effect | Elite Athletes (N=22) | Opposite direction | **0.0041** |
 
 **Key discovery:** High-gamma activity near 142 Hz selectively differentiates concentration from attentional vigilance, with opposite modulation patterns in experts vs non-experts—consistent with a neural efficiency mechanism whereby integration cost decreases with expertise.
 
@@ -60,8 +60,8 @@ Biological systems optimized by evolution—lungs, vascular networks, neural arb
 ### 2.1 The Golden Triad Derivation
 
 **Fundamental tension:** Any self-organizing system faces opposing forces:
-- **Expansion** (D → 3): maximize surface area, connectivity
-- **Conservation** (D → 2): minimize energy cost, maintenance
+- **Expansion** (D toward 3): maximize surface area, connectivity
+- **Conservation** (D toward 2): minimize energy cost, maintenance
 
 **Optimal balance:**
 
@@ -142,7 +142,7 @@ f₂ = 432 / φ^2.3107 = 432 / 3.041 = 142.1 Hz
 
 | Prediction | Result |
 |------------|--------|
-| f₁ = 102 Hz (perception) | ✅ **VALIDATED** (p = 0.027) |
+| f1 = 102 Hz (perception) | **Validated** (p = 0.027) |
 
 ---
 
@@ -174,7 +174,7 @@ f₂ = 432 / φ^2.3107 = 432 / 3.041 = 142.1 Hz
 
 | Prediction | Result |
 |------------|--------|
-| f₂ = 142 Hz (concentration) | ✅ **VALIDATED** (p = 0.0034) |
+| f2 = 142 Hz (concentration) | **Validated** (p = 0.0034) |
 
 ---
 
@@ -191,7 +191,7 @@ If 142 Hz specifically marks concentration/integration (not general arousal):
 | Frequency | ABT (Attention) | CCT (Concentration) | p-value (Wilcoxon) |
 |-----------|-----------------|---------------------|-------------------|
 | 102 Hz | 743.8 ± 1850.3 | 651.6 ± 1831.5 | 0.117 (NS) |
-| **142 Hz** | **36.0 ± 51.5** | **19.8 ± 33.4** | **0.0029** ✅ |
+| **142 Hz** | **36.0 ± 51.5** | **19.8 ± 33.4** | **0.0029** |
 
 ### 6.3 Interpretation
 
@@ -207,8 +207,8 @@ This confirms that f₂ = 142 Hz is specifically sensitive to concentration/inte
 
 | Group | Ratio 142 Hz (CCT/ABT) | Interpretation |
 |-------|------------------------|----------------|
-| Athletes (n=13) | **0.40** (↓60%) | Decrease during concentration |
-| Controls (n=9) | **1.30** (↑30%) | Increase during concentration |
+| Athletes (n=13) | **0.40** (decreased 60%) | Decrease during concentration |
+| Controls (n=9) | **1.30** (increased 30%) | Increase during concentration |
 | **p-value** | **0.0041** | **Significant difference** |
 
 ### 7.2 Key Finding
@@ -217,8 +217,8 @@ This confirms that f₂ = 142 Hz is specifically sensitive to concentration/inte
 
 | Group | During Concentration | Interpretation |
 |-------|---------------------|----------------|
-| **Athletes** | ↓ 142 Hz (60% decrease) | Neural efficiency |
-| **Controls** | ↑ 142 Hz (30% increase) | Cognitive effort |
+| **Athletes** | 142 Hz decreases (60%) | Neural efficiency |
+| **Controls** | 142 Hz increases (30%) | Cognitive effort |
 
 ### 7.3 Theoretical Implications
 
@@ -234,10 +234,10 @@ This supports the **Neural Efficiency Hypothesis**:
 
 | Test | Prediction | Result | p-value | Status |
 |------|------------|--------|---------|--------|
-| COGITATE iEEG | f₁ = 102 Hz for perception | 80-120 Hz significant | **0.027** | ✅ |
-| Elite Athletes CCT | f₂ = 142 Hz present | Controls >> Athletes | **0.009** | ✅ |
-| ABT vs CCT | 142 Hz task-specific | CCT ≠ ABT | **0.012** | ✅ |
-| Expert effect | Opposite modulation | Athletes ↓, Controls ↑ | **0.018** | ✅ |
+| COGITATE iEEG | f1 = 102 Hz for perception | 80--120 Hz significant | **0.027** | Validated |
+| Elite Athletes CCT | f2 = 142 Hz present | Controls >> Athletes | **0.0034** | Validated |
+| ABT vs CCT | 142 Hz task-specific | CCT differs from ABT | **0.0029** | Validated |
+| Expert effect | Opposite modulation | Athletes decrease, Controls increase | **0.0041** | Validated |
 
 **4/4 tests significant.** All predictions validated.
 
@@ -289,10 +289,10 @@ We have derived D* = 2.3107 as the optimal fractal dimension for conscious syste
 
 | Finding | Evidence | p-value |
 |---------|----------|---------|
-| f₁ = 102 Hz (perception) | COGITATE iEEG | 0.027 |
-| f₂ = 142 Hz (concentration) | Elite Athletes EEG | 0.009 |
-| 142 Hz task-specificity | ABT vs CCT comparison | 0.012 |
-| 142 Hz neural efficiency | Expert opposite pattern | 0.018 |
+| f1 = 102 Hz (perception) | COGITATE iEEG | 0.027 |
+| f2 = 142 Hz (concentration) | Elite Athletes EEG | 0.0034 |
+| 142 Hz task-specificity | ABT vs CCT comparison | 0.0029 |
+| 142 Hz neural efficiency | Expert opposite pattern | 0.0041 |
 
 **Central claim:**
 
